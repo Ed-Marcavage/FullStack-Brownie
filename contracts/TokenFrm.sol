@@ -43,6 +43,7 @@ contract TokenFarm is Ownable {
     function getUserTotalValue(address _user) public view returns (uint256) {
         uint256 totalValue = 0;
         require(uniqueTokensStaked[_user] > 0, "No tokens staked!");
+        // Get
         for (
             uint256 allowedTokensIndex = 0;
             allowedTokensIndex < allowedTokens.length;
@@ -102,48 +103,48 @@ contract TokenFarm is Ownable {
         }
     }
 
-    function unstakeTokens(address _token) public {
-        uint256 balance = stakingBalance[_token][msg.sender];
-        require(balance > 0, "Staking balance cannot be 0");
-        IERC20(_token).transfer(msg.sender, balance);
-        stakingBalance[_token][msg.sender] = 0;
-        uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] - 1;
-        // The code below fixes a problem not addressed in the video, where stakers could appear twice
-        // in the stakers array, receiving twice the reward.
-        if (uniqueTokensStaked[msg.sender] == 0) {
-            for (
-                uint256 stakersIndex = 0;
-                stakersIndex < stakers.length;
-                stakersIndex++
-            ) {
-                if (stakers[stakersIndex] == msg.sender) {
-                    stakers[stakersIndex] = stakers[stakers.length - 1];
-                    stakers.pop();
-                }
-            }
-        }
-    }
-
-    function addAllowedTokens(address _token) public onlyOwner {
-        allowedTokens.push(_token);
-    }
-
-    function tokenIsAllowed(address _token) public view returns (bool) {
-        for (
-            uint256 allowedTokensIndex = 0;
-            allowedTokensIndex < allowedTokens.length;
-            allowedTokensIndex++
-        ) {
-            if (allowedTokens[allowedTokensIndex] == _token) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     function updateUniqueTokensStaked(address _user, address _token) internal {
         if (stakingBalance[_token][_user] <= 0) {
             uniqueTokensStaked[_user] = uniqueTokensStaked[_user] + 1;
         }
     }
+}
+
+function unstakeTokens(address _token) public {
+    uint256 balance = stakingBalance[_token][msg.sender];
+    require(balance > 0, "Staking balance cannot be 0");
+    IERC20(_token).transfer(msg.sender, balance);
+    stakingBalance[_token][msg.sender] = 0;
+    uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] - 1;
+    // The code below fixes a problem not addressed in the video, where stakers could appear twice
+    // in the stakers array, receiving twice the reward.
+    if (uniqueTokensStaked[msg.sender] == 0) {
+        for (
+            uint256 stakersIndex = 0;
+            stakersIndex < stakers.length;
+            stakersIndex++
+        ) {
+            if (stakers[stakersIndex] == msg.sender) {
+                stakers[stakersIndex] = stakers[stakers.length - 1];
+                stakers.pop();
+            }
+        }
+    }
+}
+
+function addAllowedTokens(address _token) public onlyOwner {
+    allowedTokens.push(_token);
+}
+
+function tokenIsAllowed(address _token) public view returns (bool) {
+    for (
+        uint256 allowedTokensIndex = 0;
+        allowedTokensIndex < allowedTokens.length;
+        allowedTokensIndex++
+    ) {
+        if (allowedTokens[allowedTokensIndex] == _token) {
+            return true;
+        }
+    }
+    return false;
 }
