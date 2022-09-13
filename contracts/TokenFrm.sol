@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract TokenFarm is Ownable {
-    // mapping: token address -> staker address -> amount
+    // stakingBalance mapping: token address -> staker address -> amount
     mapping(address => mapping(address => uint256)) public stakingBalance;
     mapping(address => uint256) public uniqueTokensStaked;
     mapping(address => address) public tokenPriceFeedMapping;
@@ -72,6 +72,7 @@ contract TokenFarm is Ownable {
         return // 10000000000000000000 ETH
         // ETH/USD -> 10000000000
         // 10 * 100 = 1,000
+        // stakingBalance mapping: token address -> staker address -> uint amount
         ((stakingBalance[_token][_user] * price) / (10**decimals));
     }
 
@@ -94,17 +95,25 @@ contract TokenFarm is Ownable {
         require(_amount > 0, "Amount must be more than 0");
         require(tokenIsAllowed(_token), "Token is currently no allowed");
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        // Update uniqueTokensStaked mapping if new token for user
         updateUniqueTokensStaked(msg.sender, _token);
+        // stakingBalance mapping: token address -> staker address -> uint amount
         stakingBalance[_token][msg.sender] =
             stakingBalance[_token][msg.sender] +
             _amount;
+
+        // uniqueTokensStaked mapping: user address -> uint of unique tokens
+        // If user is a 1st time staker, add user to stakers array
         if (uniqueTokensStaked[msg.sender] == 1) {
             stakers.push(msg.sender);
         }
     }
 
     function updateUniqueTokensStaked(address _user, address _token) internal {
+        // stakingBalance mapping: token address -> staker address -> uint amount
+        // If user doesn't have this token; amount <= 0
         if (stakingBalance[_token][_user] <= 0) {
+            // uniqueTokensStaked mapping: user address -> uint of unique tokens
             uniqueTokensStaked[_user] = uniqueTokensStaked[_user] + 1;
         }
     }
@@ -136,6 +145,7 @@ contract TokenFarm is Ownable {
     }
 
     function tokenIsAllowed(address _token) public view returns (bool) {
+        //iterate through all of allowedTokens array
         for (
             uint256 allowedTokensIndex = 0;
             allowedTokensIndex < allowedTokens.length;
