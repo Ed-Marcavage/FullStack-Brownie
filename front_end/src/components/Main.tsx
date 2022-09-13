@@ -24,33 +24,36 @@ export const Main = () => {
   const DappTokenAddress = chainId
     ? networkMapping[String(chainId)]["DappToken"][0]
     : constants.AddressZero;
+  console.log(DappTokenAddress);
 
   const wethTokenAddress = chainId
-    ? brownieConfig["networks"][String(networkName)]["weth_token"]
+    ? brownieConfig["networks"][String(networkName).toLowerCase()]["weth_token"]
     : constants.AddressZero;
   console.log(wethTokenAddress);
 
   const fauTokenAddress = chainId
     ? brownieConfig["networks"][networkName]["fau_token"]
     : constants.AddressZero; //
+  console.log(fauTokenAddress);
 
-  const supportedTokens: Array<Token> = [
-    {
-      image: dapp,
-      address: DappTokenAddress,
-      name: "DAPP",
-    },
-    {
-      image: eth,
-      address: wethTokenAddress,
-      name: "WETH",
-    },
-    {
-      image: dai,
-      address: fauTokenAddress,
-      name: "DAI",
-    },
-  ];
+  // const supportedTokens: Array<Token> = [
+  //   {
+  //     image: dapp,
+  //     address: DappTokenAddress,
+  //     name: "DAPP",
+  //   },
+  //   {
+  //     image: eth,
+  //     address: wethTokenAddress,
+  //     name: "WETH",
+  //   },
+  //   {
+  //     image: dai,
+  //     address: fauTokenAddress,
+  //     name: "DAI",
+  //   },
+  // ];
 
-  return <YourWallet supportedTokens={supportedTokens} />;
+  // return <YourWallet supportedTokens={supportedTokens} />;
+  return <div>Hello1</div>;
 };
