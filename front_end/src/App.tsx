@@ -3,6 +3,7 @@ import { ChainId, DAppProvider, Goerli } from "@usedapp/core";
 import { Header } from "./components/Header";
 import { Container } from "@material-ui/core";
 import { Main } from "./components/Main";
+import { YourWallet } from "./components/yourWallet/yourWallet";
 
 // const config: Config = {
 //   readOnlyChainId: Goerli.chainId,

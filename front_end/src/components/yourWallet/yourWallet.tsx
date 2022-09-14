@@ -2,6 +2,7 @@ import { Token } from "../Main";
 import React, { useState } from "react";
 import { Box, Tab } from "@material-ui/core";
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
+import { WalletBalance } from "./WalletBalance";
 
 interface YourWalletProps {
   supportedTokens: Array<Token>;
@@ -25,6 +26,13 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
               );
             })}
           </TabList>
+          {supportedTokens.map((token, index) => {
+            return (
+              <TabPanel value={index.toString()} key={index}>
+                <WalletBalance token={supportedTokens[selectedTokenIndex]} />
+              </TabPanel>
+            );
+          })}
         </TabContext>
       </Box>
       <div>Hi</div>
